@@ -10,10 +10,7 @@ To work on this project, you'll need to set up your environment variables:
    cp hamutea_fe_v2/backend/.env.example hamutea_fe_v2/backend/.env
    ```
 
-2. Contact the project administrator to get the actual values for:
-   - Firebase API keys
-   - PayMongo API keys
-   - Other sensitive credentials
+2. The default Firebase configuration will work out of the box for development, but you can replace the values in your `.env` file for production.
 
 3. Never commit `.env` files to the repository
 

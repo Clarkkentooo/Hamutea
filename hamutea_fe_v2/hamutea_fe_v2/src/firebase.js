@@ -4,13 +4,13 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY || "YOUR_API_KEY",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCddTz_xHlf59K8na5Ygted78duw7s08TU",
   authDomain: "localhost", // Use localhost instead of hamutea-web-app.firebaseapp.com
   projectId: "hamutea-web-app",
   storageBucket: "hamutea-web-app.appspot.com",
   messagingSenderId: "612910950122",
-  appId: process.env.VITE_FIREBASE_APP_ID || "YOUR_APP_ID",
-  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID || "YOUR_MEASUREMENT_ID"
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:612910950122:web:53e865b02efde54f885993",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-0PM7ZKMCK7"
 };
 
 // Initialize Firebase
