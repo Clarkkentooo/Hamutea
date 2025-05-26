@@ -30,7 +30,7 @@ const Menu = () => {
     const [quantities, setQuantities] = useState({});
     const [selectedItem, setSelectedItem] = useState(null);
     const [activeTab, setActiveTab] = useState('description');
-    const [activeCategory, setActiveCategory] = useState('Classic Milktea Series');
+    const [activeCategory, setActiveCategory] = useState('Top Drinks');
     const [isCategoryChanging, setIsCategoryChanging] = useState(false);
     const [detailAnim, setDetailAnim] = useState(false);
     const bannerImages = [banner1, banner2, banner3];
@@ -80,6 +80,7 @@ const Menu = () => {
     const [selectedAddOns, setSelectedAddOns] = useState([]);
     const [selectedSugar, setSelectedSugar] = useState('');
     const [selectedIce, setSelectedIce] = useState('');
+    const [selectedNote, setSelectedNote] = useState('');
     const [showToast, setShowToast] = useState(false);
 
     const triggerToast = () => {
@@ -92,6 +93,7 @@ const Menu = () => {
         setSelectedSugar('');
         setSelectedIce('');
         setSelectedAddOns([]);
+        setSelectedNote('');
         setValidationErrors({ size: false, sugar: false, ice: false });
 
         if (selectedItem?.imageKey) {
@@ -165,9 +167,9 @@ const Menu = () => {
     }, [showTotalSummary]);
 
     const menuItems = [
-        // Classic Milktea Series
+        // Top Drinks
         {
-            name: 'Signature Pudding Dodol', category: 'Classic Milktea Series', price: '₱110', imageKey: 'sig_pudding_dodol', description: 'A rich and creamy blend with our signature pudding and Hamutea Dodol', ingredients: ['Sugar', 'Pudding', 'Thick Milk', 'Iced'], sizes: [
+            name: 'Signature Pudding Dodol', category: 'Top Drinks', price: '₱110', imageKey: 'sig_pudding_dodol', description: 'A rich and creamy blend with our signature pudding and Hamutea Dodol', ingredients: ['Sugar', 'Pudding', 'Thick Milk', 'Iced'], sizes: [
                 { size: 'Medium', price: '₱110' },
                 { size: 'Large', price: '₱130' }
             ]
@@ -176,6 +178,12 @@ const Menu = () => {
             name: 'No.3 Milk Tea', category: 'Classic Milktea Series', price: '₱110', imageKey: 'no_3_milktea', description: 'The third in line, but first in flavor—crafted to stand', ingredients: ['Sugar', 'Thick Milk', 'Iced'], sizes: [
                 { size: 'Medium', price: '₱110' },
                 { size: 'Large', price: '₱130' }
+            ]
+        },
+        {
+            name: 'Black Sugar Pearl Milk Tea', category: 'Top Drinks', price: '₱110', imageKey: 'black_sugar_pearl_milk_tea', description: 'A bold tea with deep caramel notes and chewy black sugar pearls', ingredients: ['Sugar', 'Thick Milk', 'Iced'], sizes: [
+                { size: 'Medium', price: '₱110' },
+                { size: 'Large', price: '₱120' }
             ]
         },
         {
@@ -209,6 +217,12 @@ const Menu = () => {
             ]
         },
         {
+            name: 'Pearl Milk Tea', category: 'Top Drinks', price: '₱90', imageKey: 'pearl_milk_tea', description: "The timeless combo of pearls and milk tea you can't go wrong with", ingredients: ['Sugar', 'Thick Milk', 'Iced'], sizes: [
+                { size: 'Medium', price: '₱90' },
+                { size: 'Large', price: '₱110' }
+            ]
+        },
+        {
             name: 'Pearl Milk Tea', category: 'Classic Milktea Series', price: '₱90', imageKey: 'pearl_milk_tea', description: "The timeless combo of pearls and milk tea you can't go wrong with", ingredients: ['Sugar', 'Thick Milk', 'Iced'], sizes: [
                 { size: 'Medium', price: '₱90' },
                 { size: 'Large', price: '₱110' }
@@ -234,6 +248,12 @@ const Menu = () => {
             ]
         },
         // Fresh Fruit Tea
+        {
+            name: 'Passion QQ', category: 'Top Drinks', price: '₱100', imageKey: 'passion_qq', description: 'Fruity and fun with every bite a passion fruit and jelly delight', ingredients: ['Passion Fruit', 'Nata', 'Coconut Jelly'], sizes: [
+                { size: 'Medium', price: '₱100' },
+                { size: 'Large', price: '₱110' }
+            ]
+        },
         {
             name: 'Passion QQ', category: 'Fresh Fruit Tea', price: '₱100', imageKey: 'passion_qq', description: 'Fruity and fun with every bite a passion fruit and jelly delight', ingredients: ['Passion Fruit', 'Nata', 'Coconut Jelly'], sizes: [
                 { size: 'Medium', price: '₱100' },
@@ -373,7 +393,7 @@ const Menu = () => {
                     <div className="flex-none w-[80px] pr-2 sm:w-[200px] overflow-y-auto px-1 sm:px-4 py-3 sm:py-5 border-r border-[#F0F0F0]">
                         <h2 className="font-[SF Pro Rounded] pl-2 font-semibold text-[20px] sm:text-[28px] text-[#462525] w-full text-center sm:text-left">Menu</h2>
                         <ul className="mt-3 flex flex-col gap-1.5 text-[11px] sm:text-[15px]">
-                            {['Classic Milktea Series', 'Fresh Milk Tea', 'Fresh Fruit Tea', 'Milk Shake', 'Pure Tea'].map((item, i) => (
+                            {['Top Drinks', 'Classic Milktea Series', 'Fresh Milk Tea', 'Fresh Fruit Tea', 'Milk Shake', 'Pure Tea'].map((item, i) => (
                                 <li key={i}
                                     className={`text-left text-[10px] sm:text-[15px] py-2 sm:py-2 px-3 sm:px-4 rounded-[12px] sm:rounded cursor-pointer font-[SF Pro Rounded] font-medium transition-all text-[#462525] ${activeCategory === item ? 'bg-[#D91517] text-white scale-[1.05]' : 'hover:text-[#D91517] opacity-80'}`}
                                     onClick={() => {
@@ -622,7 +642,7 @@ const Menu = () => {
                                 </div>
                                 
                                 {/* Add-ons */}
-                                <div className="mb-8">
+                                <div className="mb-6">
                                     <h4 className="font-[SF Pro Rounded] font-semibold text-[#462525] mb-3">Add-ons (Optional)</h4>
                                     <div className="flex flex-wrap gap-3">
                                         {['Pearl (+₱20)', 'Pudding (+₱25)', 'Nata (+₱15)', 'Cheese Cream (+₱30)'].map((addon, i) => {
@@ -648,6 +668,17 @@ const Menu = () => {
                                             );
                                         })}
                                     </div>
+                                </div>
+                                
+                                {/* Special Instructions / Note */}
+                                <div className="mb-8 animate-fadeIn">
+                                    <h4 className="font-[SF Pro Rounded] font-semibold text-[#462525] mb-3">Special Instructions (Optional)</h4>
+                                    <textarea
+                                        placeholder="Add any special requests or notes for your drink..."
+                                        value={selectedNote}
+                                        onChange={(e) => setSelectedNote(e.target.value)}
+                                        className="w-full border border-[#E0DEDE] rounded-lg p-3 text-sm text-[#666] focus:border-[#D91517] focus:outline-none transition-colors duration-200 min-h-[80px]"
+                                    />
                                 </div>
                                 
                                 {/* Quantity and Add to Cart */}
@@ -724,6 +755,7 @@ const Menu = () => {
                                                 sugar: selectedSugar,
                                                 ice: selectedIce,
                                                 addOns: selectedAddOns,
+                                                note: selectedNote,
                                                 price: totalPrice,
                                                 qty: getQty(selectedItem.imageKey)
                                             };
@@ -810,6 +842,11 @@ const Menu = () => {
                                                             <span> • {item.addOns.join(', ')}</span>
                                                         )}
                                                     </p>
+                                                    {item.note && (
+                                                        <p className="text-xs text-gray-500 italic mt-1">
+                                                            Note: {item.note}
+                                                        </p>
+                                                    )}
                                                     <div className="flex items-center mt-1">
                                                         <span className="text-[#D91517] font-medium">₱{item.price.toFixed(2)}</span>
                                                         <span className="mx-2 text-gray-400">×</span>
@@ -828,6 +865,7 @@ const Menu = () => {
                                                         setSelectedSugar(item.sugar);
                                                         setSelectedIce(item.ice);
                                                         setSelectedAddOns(item.addOns || []);
+                                                        setSelectedNote(item.note || '');
                                                         setIsEditing(true);
                                                         setEditingIndex(index);
                                                         setQuantities(prev => ({

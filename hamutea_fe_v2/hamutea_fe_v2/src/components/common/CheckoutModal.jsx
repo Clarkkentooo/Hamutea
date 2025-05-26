@@ -282,6 +282,11 @@ const CheckoutModal = ({ isOpen, onClose }) => {
                             <span> • {item.addOns.join(', ')}</span>
                           )}
                         </p>
+                        {item.note && (
+                          <p className="text-xs text-gray-500 italic mt-1">
+                            Note: {item.note}
+                          </p>
+                        )}
                         <div className="flex items-center mt-1">
                           <span className="text-[#D91517] font-medium text-xs">₱{item.price.toFixed(2)}</span>
                           <span className="mx-1 text-gray-400 text-xs">×</span>

@@ -13,14 +13,40 @@ const PaymentSuccess = () => {
   const [error, setError] = useState(null);
   const { setCartItems } = useClientContext ? useClientContext() : { setCartItems: () => {} };
   
-  // Function to clear cart and order data
+  // Function to clear cart and save order to history
   const clearOrderData = () => {
     // Clear cart items from context
     if (setCartItems) {
       setCartItems([]);
     }
     
-    // Clear localStorage data
+    // Get order details and save to history
+    const orderData = location.state?.orderDetails;
+    if (orderData) {
+      // Generate a unique ID and order number
+      const orderId = `order_${Date.now()}`;
+      const orderNumber = Math.floor(100000 + Math.random() * 900000);
+      
+      // Create history entry
+      const historyEntry = {
+        id: orderId,
+        orderNumber: orderNumber.toString(),
+        date: new Date().toISOString(),
+        status: 'processing',
+        items: orderData.items,
+        total: orderData.total,
+        paymentMethod: orderData.paymentMethod,
+        pickupTime: orderData.customTime || 'After Order'
+      };
+      
+      // Save to localStorage
+      const existingHistory = localStorage.getItem('hamutea_order_history');
+      const history = existingHistory ? JSON.parse(existingHistory) : [];
+      history.unshift(historyEntry);
+      localStorage.setItem('hamutea_order_history', JSON.stringify(history));
+    }
+    
+    // Clear current order data
     localStorage.removeItem('cart_items');
     localStorage.removeItem('hamutea_order');
   };
@@ -230,6 +256,11 @@ const PaymentSuccess = () => {
                               <span> • {item.addOns.join(', ')}</span>
                             )}
                           </p>
+                          {item.note && (
+                            <p className="text-xs text-gray-500 italic mt-1">
+                              Note: {item.note}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="text-[#D91517] font-medium">
@@ -250,15 +281,15 @@ const PaymentSuccess = () => {
             <div className="flex flex-col gap-4">
               <button 
                 onClick={() => navigate('/menu')}
-                className="w-full bg-[#D91517] text-white py-4 rounded-full font-medium hover:bg-[#a31113] transition-colors duration-200"
+                className="w-full bg-[#D91517] text-white py-4 rounded-full font-medium hover:bg-[#a31113] transition-colors duration-200 shadow-md"
               >
-                Return to Menu
+                Done
               </button>
               <button 
-                onClick={() => window.location.href = '/'}
+                onClick={() => navigate('/order-history')}
                 className="w-full bg-white border border-[#D91517] text-[#D91517] py-4 rounded-full font-medium hover:bg-[#FEF2F2] transition-colors duration-200"
               >
-                Return to System
+                View Order History
               </button>
             </div>
           </>

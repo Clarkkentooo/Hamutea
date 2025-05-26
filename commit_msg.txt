@@ -1,1 +1,1 @@
-Remove sensitive credentials and add environment variable support
+Add environment variable support with fallback values
