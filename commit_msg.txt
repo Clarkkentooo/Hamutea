@@ -1,0 +1,1 @@
+Remove sensitive credentials and add environment variable support

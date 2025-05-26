@@ -1,0 +1,25 @@
+@font-face {
+  font-family: 'AGalega';
+  src: url('/fonts/AGALEGA-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  src: url('/fonts/SF-Pro-Rounded-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Rounded';
+  src: url('/fonts/SF-Pro-Rounded-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
