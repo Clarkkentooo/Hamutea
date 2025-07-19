@@ -75,7 +75,7 @@ const Menu = () => {
 
     const getQty = (key) => quantities[key] ?? 1;
 
-    const { cartItems, setCartItems } = useClientContext();
+    const { cartItems, setCartItems, favoriteItems, toggleFavorite, isFavorite } = useClientContext();
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedAddOns, setSelectedAddOns] = useState([]);
     const [selectedSugar, setSelectedSugar] = useState('');
@@ -393,7 +393,7 @@ const Menu = () => {
                     <div className="flex-none w-[80px] pr-2 sm:w-[200px] overflow-y-auto px-1 sm:px-4 py-3 sm:py-5 border-r border-[#F0F0F0]">
                         <h2 className="font-[SF Pro Rounded] pl-2 font-semibold text-[20px] sm:text-[28px] text-[#462525] w-full text-center sm:text-left">Menu</h2>
                         <ul className="mt-3 flex flex-col gap-1.5 text-[11px] sm:text-[15px]">
-                            {['Top Drinks', 'Classic Milktea Series', 'Fresh Milk Tea', 'Fresh Fruit Tea', 'Milk Shake', 'Pure Tea'].map((item, i) => (
+                            {['Top Drinks', 'Favorites', 'Classic Milktea Series', 'Fresh Milk Tea', 'Fresh Fruit Tea', 'Milk Shake', 'Pure Tea'].map((item, i) => (
                                 <li key={i}
                                     className={`text-left text-[10px] sm:text-[15px] py-2 sm:py-2 px-3 sm:px-4 rounded-[12px] sm:rounded cursor-pointer font-[SF Pro Rounded] font-medium transition-all text-[#462525] ${activeCategory === item ? 'bg-[#D91517] text-white scale-[1.05]' : 'hover:text-[#D91517] opacity-80'}`}
                                     onClick={() => {
@@ -439,14 +439,16 @@ const Menu = () => {
                                     className={`grid gap-4 w-full max-w-[900px] mx-auto justify-center relative transition-all duration-200 ease-in-out transform ${isCategoryChanging ? 'opacity-0 translate-y-5' : 'opacity-100 translate-y-0'}`}
                                     style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}
                                 >
-                                    {menuItems
-                                        .filter(item => item.category === activeCategory)
+                                    {(activeCategory === 'Favorites' ? favoriteItems : menuItems
+                                        .filter(item => item.category === activeCategory))
                                         .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
                                         .length === 0 ? (
-                                        <p className="text-center text-[#999] font-[SF Pro Rounded] text-[16px] col-span-full">Not available</p>
+                                        <p className="text-center text-[#999] font-[SF Pro Rounded] text-[16px] col-span-full">
+                                            {activeCategory === 'Favorites' ? 'No favorite drinks yet' : 'Not available'}
+                                        </p>
                                     ) : (
-                                        menuItems
-                                            .filter(item => item.category === activeCategory)
+                                        (activeCategory === 'Favorites' ? favoriteItems : menuItems
+                                            .filter(item => item.category === activeCategory))
                                             .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
                                             .map((item, idx) => (
                                                 <div key={idx} 
@@ -536,7 +538,20 @@ const Menu = () => {
                                     />
                                 </div>
                                 
-                                <h3 className="font-[SF Pro Rounded] font-semibold text-lg sm:text-xl text-[#462525] mb-2">{selectedItem?.name}</h3>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <h3 className="font-[SF Pro Rounded] font-semibold text-lg sm:text-xl text-[#462525]">{selectedItem?.name}</h3>
+                                    <button
+                                        onClick={() => toggleFavorite(selectedItem)}
+                                        className={`rounded-full text-[20px] font-bold transform transition-all duration-150 hover:scale-110 active:scale-95 shadow-md hover:shadow-lg flex items-center justify-center ${
+                                            isFavorite(selectedItem) 
+                                                ? 'bg-red-500 text-white' 
+                                                : 'bg-gray-200 text-gray-600 hover:bg-red-100'
+                                        }`}
+                                        style={{ width: '35px', height: '35px', padding: '0' }}
+                                    >
+                                        ♥
+                                    </button>
+                                </div>
                                 <p className="text-[#666] text-sm mb-4">{selectedItem?.description}</p>
                                 
                                 <div className="flex gap-4 mb-4">

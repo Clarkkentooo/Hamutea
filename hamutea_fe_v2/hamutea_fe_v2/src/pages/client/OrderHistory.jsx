@@ -9,91 +9,25 @@ const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Mock data for demonstration
+  // Load real order history from localStorage
   useEffect(() => {
-    // In a real app, this would be an API call to fetch user's orders
-    const mockOrders = [
-      {
-        id: '123456',
-        orderNumber: '100234',
-        date: '2023-06-15T14:30:00',
-        status: 'processing',
-        items: [
-          {
-            name: 'Signature Pudding Dodol',
-            size: 'Medium',
-            sugar: '50%',
-            ice: 'Regular Ice',
-            addOns: ['Pearl (+₱20)'],
-            note: 'Extra pearls please',
-            price: 130,
-            qty: 1,
-            imageKey: 'sig_pudding_dodol'
-          },
-          {
-            name: 'Pearl Milk Tea',
-            size: 'Large',
-            sugar: '75%',
-            ice: 'Less Ice',
-            addOns: [],
-            price: 110,
-            qty: 2,
-            imageKey: 'pearl_milk_tea'
-          }
-        ],
-        total: 350,
-        paymentMethod: 'QR Code Payment',
-        pickupTime: 'After Order'
-      },
-      {
-        id: '123457',
-        orderNumber: '100235',
-        date: '2023-06-14T10:15:00',
-        status: 'completed',
-        items: [
-          {
-            name: 'Black Sugar Pearl Milk Tea',
-            size: 'Large',
-            sugar: '100%',
-            ice: 'Regular Ice',
-            addOns: ['Pudding (+₱25)'],
-            price: 145,
-            qty: 1,
-            imageKey: 'black_sugar_pearl_milk_tea'
-          }
-        ],
-        total: 145,
-        paymentMethod: 'E-wallet',
-        pickupTime: '2:30 PM'
-      },
-      {
-        id: '123458',
-        orderNumber: '100236',
-        date: '2023-06-13T16:45:00',
-        status: 'completed',
-        items: [
-          {
-            name: 'Passion QQ',
-            size: 'Medium',
-            sugar: '25%',
-            ice: 'Extra Ice',
-            addOns: [],
-            price: 100,
-            qty: 3,
-            imageKey: 'passion_qq'
-          }
-        ],
-        total: 300,
-        paymentMethod: 'Cash on Pickup',
-        pickupTime: 'After Order'
+    try {
+      // Get order history from localStorage
+      const storedHistory = localStorage.getItem('hamutea_order_history');
+      let orderHistory = [];
+      
+      if (storedHistory) {
+        orderHistory = JSON.parse(storedHistory);
       }
-    ];
-    
-    // Simulate API delay
-    setTimeout(() => {
-      setOrders(mockOrders);
+      
+      // If no orders in localStorage, use empty array
+      setOrders(orderHistory || []);
+    } catch (error) {
+      console.error('Error loading order history:', error);
+      setOrders([]);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   }, []);
   
   // Filter orders based on active tab
@@ -190,6 +124,10 @@ const OrderHistory = () => {
                     </div>
                   </div>
                   
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Email:</span>
+                    <span className="font-medium">{order.customerEmail || 'Not provided'}</span>
+                  </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Payment Method:</span>
                     <span className="font-medium">{order.paymentMethod}</span>

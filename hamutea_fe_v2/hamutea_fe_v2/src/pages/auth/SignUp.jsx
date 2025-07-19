@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import GoogleIcon from '@assets/svg/social/google-icon.svg';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../../firebase';
+import { useAuth } from '../../context/AuthContext';
+import GoogleIcon from '../../assets/svg/social/google-icon.svg';
 
 const SignUp = () => {
     const [name, setName] = useState('');
@@ -10,14 +13,90 @@ const SignUp = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your signup logic here
+        setError('');
+        
+        // Validate form
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+        
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters');
+            return;
+        }
+        
+        try {
+            setLoading(true);
+            
+            // Create user with email and password
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            
+            // Update profile with name
+            await updateProfile(user, { displayName: name });
+            
+            // Get token
+            const token = await user.getIdToken();
+            
+            // Create user data object
+            const userData = {
+                id: user.uid,
+                email: user.email,
+                emailVerified: user.emailVerified
+            };
+            
+            // Login user
+            login(userData, token);
+            
+            // Redirect to home page
+            navigate('/');
+        } catch (error) {
+            console.error('Error signing up:', error);
+            setError('Failed to create an account');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleGoogleSignUp = () => {
-        // Add your Google signup logic here
+    const handleGoogleSignUp = async () => {
+        try {
+            setLoading(true);
+            setError('');
+            
+            // Import needed for Google sign-in
+            const { signInWithPopup } = await import('firebase/auth');
+            const { googleProvider } = await import('../../firebase');
+            
+            // Sign in with Google
+            const result = await signInWithPopup(auth, googleProvider);
+            const user = result.user;
+            
+            // Get token
+            const token = await user.getIdToken();
+            
+            // Create user data object
+            const userData = {
+                id: user.uid,
+                email: user.email,
+                emailVerified: user.emailVerified
+            };
+            
+            // Login user
+            login(userData, token);
+            
+            // Redirect to home page
+            navigate('/');
+        } catch (error) {
+            console.error('Error signing up with Google:', error);
+            setError('Failed to sign up with Google');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

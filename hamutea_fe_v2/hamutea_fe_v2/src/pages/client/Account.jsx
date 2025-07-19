@@ -122,8 +122,15 @@ const Account = () => {
             setIsVerifying(true);
             setVerificationError('');
             
-            // Send verification code to phone using the correct API endpoint
-            await api.verification.sendPhoneCode(userData.phone);
+            // Send verification code to phone
+            const token = await auth.currentUser.getIdToken();
+            await api.post('/verification/phone', {
+                phone: userData.phone
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             
             setVerificationSent(true);
             setCountdown(60); // 60 seconds cooldown
@@ -140,8 +147,16 @@ const Account = () => {
             setIsVerifying(true);
             setVerificationError('');
             
-            // Verify phone code using the correct API endpoint
-            const response = await api.verification.verifyPhoneCode(verificationCode);
+            // Verify phone code
+            const token = await auth.currentUser.getIdToken();
+            await api.post('/verification/phone/verify', {
+                phone: userData.phone,
+                code: verificationCode
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             
             // Update user data
             updateUser({
@@ -166,8 +181,19 @@ const Account = () => {
             setIsVerifying(true);
             setVerificationError('');
             
-            // Send email verification using the correct API endpoint
-            await api.verification.sendEmailVerification(userData.email);
+            // Send email verification
+            const user = auth.currentUser;
+            await sendEmailVerification(user);
+            
+            // Update email in database
+            const token = await user.getIdToken();
+            await api.put('/users/profile', {
+                email: userData.email
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             
             // Update context
             updateUser({

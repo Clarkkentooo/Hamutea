@@ -12,7 +12,6 @@ import { EMAILJS_CONFIG } from "@utils/emailConfig";
 const ContactUs = () => {
     const [openIndex, setOpenIndex] = useState(null);
     const [showContactOptions, setShowContactOptions] = useState(false);
-    const contactOptionsRef = useRef(null);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -57,20 +56,6 @@ const ContactUs = () => {
     const toggleContactOptions = () => {
         setShowContactOptions(prev => !prev);
     };
-    
-    // Close contact options when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (contactOptionsRef.current && !contactOptionsRef.current.contains(event.target)) {
-                setShowContactOptions(false);
-            }
-        };
-        
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
     
     // Initialize EmailJS
     useEffect(() => {
@@ -168,7 +153,7 @@ const ContactUs = () => {
                     get in touch, and we'll get back to you as soon as we can.
                 </p>
 
-                <div className="flex items-center justify-center mt-5 relative" ref={contactOptionsRef}>
+                <div className="flex flex-col items-center justify-center mt-5">
                     <button
                         className="px-10 bg-[#E44040] hover:bg-[#FF7A31] text-white text-[3vw] sm:text-sm md:text-base font-semibold transition-colors duration-300"
                         style={{ borderRadius: '30.1834px' }}
@@ -177,27 +162,25 @@ const ContactUs = () => {
                         Contact Us
                     </button>
                     
-                    {/* Contact Options Dropdown */}
-                    {showContactOptions && (
-                        <div className="absolute top-full mt-2 bg-white shadow-lg rounded-md p-4 z-20 w-64">
-                            <div className="flex flex-col gap-3">
-                                <a 
-                                    href="mailto:faith@afanti.com.ph" 
-                                    className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md transition-colors"
-                                >
-                                    <Icon name="Mail" className="w-5 h-5 text-[#E44040]" />
-                                    <span>faith@afanti.com.ph</span>
-                                </a>
-                                <a 
-                                    href="tel:09672068268" 
-                                    className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md transition-colors"
-                                >
-                                    <Icon name="Phone" className="w-5 h-5 text-[#E44040]" />
-                                    <span>09672068268</span>
-                                </a>
-                            </div>
+                    {/* Contact Options */}
+                    <div className={`mt-4 bg-white shadow-lg rounded-md p-4 w-64 transition-all duration-300 ${showContactOptions ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0 overflow-hidden'}`}>
+                        <div className="flex flex-col gap-3">
+                            <a 
+                                href="mailto:faith@afanti.com.ph" 
+                                className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                            >
+                                <Icon name="Mail" className="w-5 h-5 text-[#E44040]" />
+                                <span>faith@afanti.com.ph</span>
+                            </a>
+                            <a 
+                                href="tel:09672068268" 
+                                className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                            >
+                                <Icon name="Phone" className="w-5 h-5 text-[#E44040]" />
+                                <span>09672068268</span>
+                            </a>
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
 

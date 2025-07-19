@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { auth } from '../../firebase';
+import { useAuth } from '../../context/AuthContext';
 import GoogleIcon from '../../assets/svg/social/google-icon.svg';
 
 const SignIn = () => {
@@ -7,20 +10,89 @@ const SignIn = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        setError('');
         
-        // Simulating login for now
-        setTimeout(() => {
+        try {
+            // Sign in with email and password
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            
+            // Get token
+            const token = await user.getIdToken();
+            
+            // Create user data object
+            const userData = {
+                id: user.uid,
+                name: user.displayName || user.email.split('@')[0],
+                email: user.email,
+                emailVerified: user.emailVerified
+            };
+            
+            // Login user
+            login(userData, token);
+            
+            // Redirect to account page after login
+            window.location.href = '/account';
+        } catch (error) {
+            console.error('Error signing in:', error);
+            
+            // Show more specific error messages
+            if (error.code === 'auth/invalid-email') {
+                setError('Invalid email format');
+            } else if (error.code === 'auth/user-not-found') {
+                setError('No account found with this email');
+            } else if (error.code === 'auth/wrong-password') {
+                setError('Incorrect password');
+            } else {
+                setError('Login failed: ' + error.message);
+            }
+        } finally {
             setLoading(false);
-            console.log('Login attempt with:', email, password);
-        }, 1500);
+        }
     };
 
-    const handleGoogleLogin = () => {
-        console.log('Google login clicked');
+    const handleGoogleLogin = async () => {
+        try {
+            setLoading(true);
+            setError('');
+            
+            // Create a new provider instance each time
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            
+            // Sign in with Google
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            
+            // Get token
+            const token = await user.getIdToken();
+            
+            // Create user data object
+            const userData = {
+                id: user.uid,
+                email: user.email,
+                emailVerified: user.emailVerified
+            };
+            
+            // Login user
+            login(userData, token);
+            
+            // Redirect to account page after login
+            window.location.href = '/account';
+        } catch (error) {
+            console.error('Error signing in with Google:', error);
+            setError('Google sign-in failed: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

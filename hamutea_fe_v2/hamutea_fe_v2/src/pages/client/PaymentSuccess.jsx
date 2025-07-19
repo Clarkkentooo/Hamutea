@@ -23,9 +23,29 @@ const PaymentSuccess = () => {
     // Get order details and save to history
     const orderData = location.state?.orderDetails;
     if (orderData) {
+      // Check if we've already processed this order (to prevent duplicates)
+      const orderProcessed = sessionStorage.getItem('last_processed_order');
+      if (orderProcessed) {
+        const lastOrder = JSON.parse(orderProcessed);
+        const sameItems = JSON.stringify(lastOrder.items) === JSON.stringify(orderData.items);
+        const sameTotal = lastOrder.total === orderData.total;
+        const timeDiff = Date.now() - lastOrder.timestamp;
+        
+        // If same order was processed in the last 10 seconds, skip saving it again
+        if (sameItems && sameTotal && timeDiff < 10000) {
+          console.log('Skipping duplicate order save');
+          return;
+        }
+      }
+      
       // Generate a unique ID and order number
       const orderId = `order_${Date.now()}`;
       const orderNumber = Math.floor(100000 + Math.random() * 900000);
+      
+      // Get user email from localStorage if available
+      const userEmail = localStorage.getItem('adminUser') 
+        ? JSON.parse(localStorage.getItem('adminUser'))?.email 
+        : orderData.customerEmail || 'customer@example.com';
       
       // Create history entry
       const historyEntry = {
@@ -36,7 +56,8 @@ const PaymentSuccess = () => {
         items: orderData.items,
         total: orderData.total,
         paymentMethod: orderData.paymentMethod,
-        pickupTime: orderData.customTime || 'After Order'
+        pickupTime: orderData.customTime || 'After Order',
+        customerEmail: userEmail
       };
       
       // Save to localStorage
@@ -44,6 +65,13 @@ const PaymentSuccess = () => {
       const history = existingHistory ? JSON.parse(existingHistory) : [];
       history.unshift(historyEntry);
       localStorage.setItem('hamutea_order_history', JSON.stringify(history));
+      
+      // Mark this order as processed to prevent duplicates
+      sessionStorage.setItem('last_processed_order', JSON.stringify({
+        items: orderData.items,
+        total: orderData.total,
+        timestamp: Date.now()
+      }));
     }
     
     // Clear current order data
@@ -210,6 +238,11 @@ const PaymentSuccess = () => {
                 </div>
                 
                 <div className="flex justify-between">
+                  <span className="text-gray-600">Email:</span>
+                  <span className="font-medium">{orderDetails?.customerEmail || localStorage.getItem('adminUser') ? JSON.parse(localStorage.getItem('adminUser'))?.email : 'customer@example.com'}</span>
+                </div>
+                
+                <div className="flex justify-between">
                   <span className="text-gray-600">Pickup Time:</span>
                   <span className="font-medium">{orderDetails?.customTime || 'After Order'}</span>
                 </div>
@@ -278,18 +311,12 @@ const PaymentSuccess = () => {
               </p>
             </div>
             
-            <div className="flex flex-col gap-4">
+            <div className="flex justify-center">
               <button 
                 onClick={() => navigate('/menu')}
-                className="w-full bg-[#D91517] text-white py-4 rounded-full font-medium hover:bg-[#a31113] transition-colors duration-200 shadow-md"
+                className="w-full max-w-xs bg-[#D91517] text-white py-4 rounded-full font-medium hover:bg-[#a31113] transition-colors duration-200 shadow-md"
               >
                 Done
-              </button>
-              <button 
-                onClick={() => navigate('/order-history')}
-                className="w-full bg-white border border-[#D91517] text-[#D91517] py-4 rounded-full font-medium hover:bg-[#FEF2F2] transition-colors duration-200"
-              >
-                View Order History
               </button>
             </div>
           </>
